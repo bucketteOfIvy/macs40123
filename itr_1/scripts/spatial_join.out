@@ -1,0 +1,23 @@
+Defaulting to user installation because normal site-packages is not writeable
+Requirement already satisfied: geopandas in /home/wimer/.local/lib/python3.9/site-packages (0.14.4)
+Requirement already satisfied: fiona>=1.8.21 in /home/wimer/.local/lib/python3.9/site-packages (from geopandas) (1.10.1)
+Requirement already satisfied: numpy>=1.22 in /home/wimer/.local/lib/python3.9/site-packages (from geopandas) (1.22.4)
+Requirement already satisfied: packaging in /home/wimer/.local/lib/python3.9/site-packages (from geopandas) (24.0)
+Requirement already satisfied: pandas>=1.4.0 in /home/wimer/.local/lib/python3.9/site-packages (from geopandas) (1.5.3)
+Requirement already satisfied: pyproj>=3.3.0 in /home/wimer/.local/lib/python3.9/site-packages (from geopandas) (3.6.1)
+Requirement already satisfied: shapely>=1.8.0 in /home/wimer/.local/lib/python3.9/site-packages (from geopandas) (2.0.6)
+Requirement already satisfied: attrs>=19.2.0 in /home/wimer/.local/lib/python3.9/site-packages (from fiona>=1.8.21->geopandas) (23.2.0)
+Requirement already satisfied: certifi in /home/wimer/.local/lib/python3.9/site-packages (from fiona>=1.8.21->geopandas) (2024.2.2)
+Requirement already satisfied: click~=8.0 in /home/wimer/.local/lib/python3.9/site-packages (from fiona>=1.8.21->geopandas) (8.1.7)
+Requirement already satisfied: click-plugins>=1.0 in /software/python-anaconda-2022.05-el8-x86_64/lib/python3.9/site-packages (from fiona>=1.8.21->geopandas) (1.1.1)
+Requirement already satisfied: cligj>=0.5 in /home/wimer/.local/lib/python3.9/site-packages (from fiona>=1.8.21->geopandas) (0.7.2)
+Requirement already satisfied: importlib-metadata in /home/wimer/.local/lib/python3.9/site-packages (from fiona>=1.8.21->geopandas) (7.1.0)
+Requirement already satisfied: python-dateutil>=2.8.1 in /home/wimer/.local/lib/python3.9/site-packages (from pandas>=1.4.0->geopandas) (2.9.0.post0)
+Requirement already satisfied: pytz>=2020.1 in /software/python-anaconda-2022.05-el8-x86_64/lib/python3.9/site-packages (from pandas>=1.4.0->geopandas) (2024.1)
+Requirement already satisfied: six>=1.5 in /home/wimer/.local/lib/python3.9/site-packages (from python-dateutil>=2.8.1->pandas>=1.4.0->geopandas) (1.16.0)
+Requirement already satisfied: zipp>=0.5 in /home/wimer/.local/lib/python3.9/site-packages (from importlib-metadata->fiona>=1.8.21->geopandas) (3.18.1)
+reading data..
+converting to EPSG 2263
+Buffering..
+Joining..
+Saving...

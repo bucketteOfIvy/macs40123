@@ -1,0 +1,18 @@
+module load python
+
+echo Running the entire ITR pipeline!
+
+echo Getting streets
+python 0_get_streets.py
+
+echo Getting network
+python 1_get_network.py
+
+echo Getting crimes
+python 2_get_crimes.py
+
+echo Issuing sbatch for data join
+sbatch 3_join_data.sbatch --wait
+
+echo doing fpm and outputting
+sbatch 4_fpm.sbatch --wait
