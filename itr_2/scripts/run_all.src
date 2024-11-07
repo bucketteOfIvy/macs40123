@@ -1,0 +1,12 @@
+module load python
+
+echo Running the entire ITR pipeline!
+
+echo Getting spatial
+python 1_get_spatial.py
+
+echo Getting crashes
+python 2_get_crashes.py
+
+echo Split things
+python 3_split_graphs.py
