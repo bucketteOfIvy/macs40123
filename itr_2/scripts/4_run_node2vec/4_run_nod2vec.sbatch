@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=4_run_node2vec.py
-#SBATCH --output=4_run_node2vec.out
-#SBATCH --error=4_run_node2vec.err
+#SBATCH --output=out.out
+#SBATCH --error=err.err
 #SBATCH --time=00:30:00
 #SBATCH --nodes=1
 #SBATCH --partition=gpu

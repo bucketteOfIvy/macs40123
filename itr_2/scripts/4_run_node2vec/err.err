@@ -1,0 +1,11 @@
+2024-11-14 14:21:08.450985: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F AVX512_VNNI FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-11-14 14:21:08.586267: I tensorflow/core/util/port.cc:104] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+Traceback (most recent call last):
+  File "/home/wimer/github/macs40123/macs40123/itr_2/scripts/4_run_node2vec/4_run_node2vec.py", line 205, in <module>
+    data, geoid_dict = read_in_graphs()
+  File "/home/wimer/github/macs40123/macs40123/itr_2/scripts/4_run_node2vec/4_run_node2vec.py", line 157, in read_in_graphs
+    data = from_osmnx(G)
+  File "/home/wimer/github/macs40123/macs40123/itr_2/scripts/4_run_node2vec/4_run_node2vec.py", line 60, in from_osmnx
+    raise ValueError('Not all nodes contain the same attributes')
+ValueError: Not all nodes contain the same attributes

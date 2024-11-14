@@ -1,6 +1,6 @@
 # This script is adapted from the class example and the Pytorch geometric 
 # example here: https://github.com/pyg-team/pytorch_geometric/blob/master/examples/node2vec.py
-
+import pickle
 import sys
 import geopandas as gpd
 import torch
@@ -13,110 +13,109 @@ from torch_geometric.data import Data
 from collections import defaultdict
 from torch import Tensor
 
-# def from_osmnx(G, group_node_attrs=None, group_edge_attrs=None):
-#     '''
-#     Converts osmnx graph or digraph to torch_geometric.data.Data objects.
-#     Based nearly entirely on torch.geometry.utils.convert.from_networkx, 
-#     but with modifications for this specific project.
+def from_osmnx(G, group_node_attrs=None, group_edge_attrs=None):
+     '''
+     Converts osmnx graph or digraph to torch_geometric.data.Data objects.
+     Based nearly entirely on torch.geometry.utils.convert.from_networkx, 
+     but with modifications for this specific project.
+     Args:
+       G (networkx.Graph or networx.DiGraph): A networkx graph
+       group_node_attrs (List[str], "all", or None): The node attributes to be
+         concatenated and added to data.x (defaults to None)
+       group_edge_attrs (List[str], "all", or None): The edge attributes to be
+         concatenated and added to data.edge_attr. Defaults to None.
 
-#     Args:
-#       G (networkx.Graph or networx.DiGraph): A networkx graph
-#       group_node_attrs (List[str], "all", or None): The node attributes to be
-#         concatenated and added to data.x (defaults to None)
-#       group_edge_attrs (List[str], "all", or None): The edge attributes to be
-#         concatenated and added to data.edge_attr. Defaults to None.
-
-#       All attributes must be numeric (woe)
-#     '''
+       All attributes must be numeric (woe)
+     '''
     
-#     G = G.to_directed() if not nx.is_directed(G) else G
+     G = G.to_directed() if not nx.is_directed(G) else G
 
-#     mapping = dict(zip(G.nodes(), range(G.number_of_nodes())))
-#     edge_index = torch.empty((2, G.number_of_edges()), dtype=torch.long)
-#     for i, (src, dst) in enumerate(G.edges()):
-#         edge_index[0, i] = mapping[src]
-#         edge_index[1, i] = mapping[dst]
+     mapping = dict(zip(G.nodes(), range(G.number_of_nodes())))
+     edge_index = torch.empty((2, G.number_of_edges()), dtype=torch.long)
+     for i, (src, dst) in enumerate(G.edges()):
+         edge_index[0, i] = mapping[src]
+         edge_index[1, i] = mapping[dst]
 
-#     data_dict = defaultdict(list)
-#     data_dict['edge_index'] = edge_index
+     data_dict = defaultdict(list)
+     data_dict['edge_index'] = edge_index
 
-#     node_attrs = []
-#     if G.number_of_nodes() > 0:
-#         node_attrs = list(next(iter(G.nodes(data=True)))[-1].keys())
+     node_attrs = []
+     if G.number_of_nodes() > 0:
+         node_attrs = list(next(iter(G.nodes(data=True)))[-1].keys())
     
-#     edge_attrs = []
-#     if G.number_of_edges() > 0:
-#         edge_attrs = list(next(iter(G.edges(data=True)))[-1].keys())
+     edge_attrs = []
+     if G.number_of_edges() > 0:
+         edge_attrs = list(next(iter(G.edges(data=True)))[-1].keys())
     
-#     if group_node_attrs and not isinstance(group_node_attrs, list):
-#         group_node_attrs = node_attrs
+     if group_node_attrs and not isinstance(group_node_attrs, list):
+         group_node_attrs = node_attrs
 
-#     if group_edge_attrs and not isinstance(group_edge_attrs, list):
-#         group_edge_attrs = node_attrs
+     if group_edge_attrs and not isinstance(group_edge_attrs, list):
+         group_edge_attrs = node_attrs
 
-#     for i, (_, feat_dict) in enumerate(G.nodes(data=True)):
-#         if set(feat_dict.keys()) != set(node_attrs):
-#             print(feat_dict.keys())
-#             print(node_attrs)
-#             raise ValueError('Not all nodes contain the same attributes')
-#         for key, value in feat_dict.items():
-#             data_dict[str(key)].append(value)
+     for i, (_, feat_dict) in enumerate(G.nodes(data=True)):
+         if set(feat_dict.keys()) != set(node_attrs):
+             print(feat_dict.keys())
+             print(node_attrs)
+             raise ValueError('Not all nodes contain the same attributes')
+         for key, value in feat_dict.items():
+             data_dict[str(key)].append(value)
     
 
-#     j = 0
-#     for i, (_, _, feat_dict) in enumerate(G.edges(data=True)):
+     j = 0
+     for i, (_, _, feat_dict) in enumerate(G.edges(data=True)):
         
-#         if set(feat_dict.keys()) != set(edge_attrs):
-#             print(feat_dict.keys())
-#             print(node_attrs)
-#             j += 1
+         if set(feat_dict.keys()) != set(edge_attrs):
+             print(feat_dict.keys())
+             print(node_attrs)
+             j += 1
             
-#             #raise ValueError("Not all edges contain the same attributes")
-#         for key, value in feat_dict.items():
-#             key = f'edge_{key}' if key in node_attrs else key
-#             data_dict[str(key)].append(value)
-#     print(j)
+             #raise ValueError("Not all edges contain the same attributes")
+         for key, value in feat_dict.items():
+             key = f'edge_{key}' if key in node_attrs else key
+             data_dict[str(key)].append(value)
+     print(j)
     
-#     for key, value in G.graph.items():
-#         if key == 'node_default' or key == 'edge_default':
-#             continue
-#         key = f'graph_{key}' if key in node_attrs else key
-#         data_dict[str(key)] = value
+     for key, value in G.graph.items():
+         if key == 'node_default' or key == 'edge_default':
+             continue
+         key = f'graph_{key}' if key in node_attrs else key
+         data_dict[str(key)] = value
     
-#     for key, value in data_dict.items():
-#         if isinstance(value, (tuple, list)) and isinstance(value[0], Tensor):
-#             data_dict[key] = torch.stack(value, dim=0)
-#         else:
-#             try:
-#                 data_dict[key] = torch.as_tensor(value)
-#             except Exception:
-#                 pass
+     for key, value in data_dict.items():
+         if isinstance(value, (tuple, list)) and isinstance(value[0], Tensor):
+             data_dict[key] = torch.stack(value, dim=0)
+         else:
+             try:
+                 data_dict[key] = torch.as_tensor(value)
+             except Exception:
+                 pass
     
-#     data = Data.from_dict(data_dict)
+     data = Data.from_dict(data_dict)
 
-#     if group_node_attrs:
-#         xs = []
-#         for key in group_node_attrs:
-#             x = data[key]
-#             x = x.view(-1, 1) if x.dim() <= 1 else x
-#             xs.append(x)
-#             del data[key]
-#         data.x = torch.cat(xs, dim=-1)
+     if group_node_attrs:
+         xs = []
+         for key in group_node_attrs:
+             x = data[key]
+             x = x.view(-1, 1) if x.dim() <= 1 else x
+             xs.append(x)
+             del data[key]
+         data.x = torch.cat(xs, dim=-1)
     
-#     if group_edge_attrs:
-#         xs = []
-#         for key in group_edge_attrs:
-#             key = f'edge_{key}' if key in node_attrs else key
-#             x = data[key]
-#             x = x.view(-1, 1) if x.dim() <= 1 else x
-#             xs.append(x)
-#             del data[key]
-#         data.edge_attr = torch.cat(xs, dim=-1)
+     if group_edge_attrs:
+         xs = []
+         for key in group_edge_attrs:
+             key = f'edge_{key}' if key in node_attrs else key
+             x = data[key]
+             x = x.view(-1, 1) if x.dim() <= 1 else x
+             xs.append(x)
+             del data[key]
+         data.edge_attr = torch.cat(xs, dim=-1)
     
-#     if data.x is not None and data.pos is not None:
-#         data.num_nodes = G.number_of_nodes()
+     if data.x is not None and data.pos is not None:
+         data.num_nodes = G.number_of_nodes()
     
-#     return data
+     return data
         
 
 def setup_model(data):
@@ -152,10 +151,10 @@ def read_in_graphs(edges_loc="../../data/shapes/newyork_edges_2020.gpkg",
     edges = edges.set_index(['u', 'v', 'key'])
     nodes = gpd.read_file(nodes_loc)
     nodes = nodes.set_index(['osmid'])
-    G = graph_from_gdfs(nodes[['GEOID']], edges[['geometry']])
-    
+    G = graph_from_gdfs(nodes[['y', 'x', 'GEOID']], edges[['geometry']])
+
     # We need this in pytorch's graph format
-    data = from_networkx(G)
+    data = from_osmnx(G)
 
     # make dict
     geoid_dict = {}
@@ -164,7 +163,7 @@ def read_in_graphs(edges_loc="../../data/shapes/newyork_edges_2020.gpkg",
             geoid_dict[val] = [i]
             continue
         geoid_dict[val].append(i)
-    
+
     # No longer need this, and do not want
     # it considered in node2vec
     del data.GEOID
@@ -218,5 +217,7 @@ if __name__ == "__main__":
     # Save model
     print("Saving..")
     torch.save(model, "../../data/models/node2vec_no_att")
-    
+
+    with open('../../data/models/geoid_to_index.pkl', 'wb') as f:
+        pickle.dump(geoid_dict, f)
 
