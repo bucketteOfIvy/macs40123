@@ -127,7 +127,7 @@ def setup_model(data):
         data.edge_index,
         embedding_dim=128,
         walk_length=20,
-        content_size=10,
+        context_size=10,
         walks_per_node=10,
         num_negative_samples=1,
         p=1.0,
