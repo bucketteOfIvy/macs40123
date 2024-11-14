@@ -10,3 +10,9 @@ python 2_get_crashes.py
 
 echo Split things
 python 3_split_graphs.py
+
+echo Submitting sbatch
+cd 4_run_node2vec
+sbatch 4_run_nod2vec.sbatch
+
+echo Did my stuff!
