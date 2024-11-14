@@ -13,13 +13,15 @@ from torch_geometric.data import Data
 from collections import defaultdict
 from torch import Tensor
 
-def from_osmnx(G, group_node_attrs=None, group_edge_attrs=None):
+def from_osmnx(G, nodes_gdf, edges_gdf, group_node_attrs=None, group_edge_attrs=None):
     '''
     Converts osmnx graph or digraph to torch_geometric.data.Data objects.
     Based nearly entirely on torch.geometry.utils.convert.from_networkx, 
     but with modifications for this specific project.
     Args:
       G (networkx.Graph or networx.DiGraph): A networkx graph
+      nodes_gdf (GeoDataFrame): the initial gdf of nodes.
+      edges_gdf (GeoDataFrame)L the initial gdf of edges.
       group_node_attrs (List[str], "all", or None): The node attributes to be
         concatenated and added to data.x (defaults to None)
       group_edge_attrs (List[str], "all", or None): The edge attributes to be
@@ -52,24 +54,27 @@ def from_osmnx(G, group_node_attrs=None, group_edge_attrs=None):
     if group_edge_attrs and not isinstance(group_edge_attrs, list):
         group_edge_attrs = edge_attrs
 
+    # Main change from the initial from_networkx function are these
+    # two chunks. Instead of raising an error, they now just 
+    # reference my initial GDFs, since I can do that. 
     for i, (_, feat_dict) in enumerate(G.nodes(data=True)):
         if set(feat_dict.keys()) != set(node_attrs):
-            raise ValueError('Not all nodes contain the same attributes')
+            feat_dict = {}
+            print(f"Correcting dropped node values for row {i}")
+            for k in node_attrs:
+                feat_dict[k] = nodes_gdf.iloc[i].get(k)
         for key, value in feat_dict.items():
             data_dict[str(key)].append(value)
     
-
-    j = 0
-    for i, (_, _, feat_dict) in enumerate(G.edges(data=True)):
-        
+    for i, (_, _, feat_dict) in enumerate(G.edges(data=True)):        
         if set(feat_dict.keys()) != set(edge_attrs):
-            print(feat_dict.keys())
-            print(node_attrs)
-            raise ValueError("Not all edges contain the same attributes")
+            feat_dict = {}
+            print(f"Correcting dropped edge values for row {i}")
+            for k in edge_attrs:
+                feat_dict[k] = edges_gdf.iloc[i].get(k)
         for key, value in feat_dict.items():
             key = f'edge_{key}' if key in node_attrs else key
             data_dict[str(key)].append(value)
-    print(j)
     
     for key, value in G.graph.items():
         if key == 'node_default' or key == 'edge_default':
@@ -149,7 +154,7 @@ def read_in_graphs(edges_loc="../../data/shapes/newyork_edges_2020.gpkg",
     G = graph_from_gdfs(nodes[['y', 'x']], edges[['geometry']])
 
     # We need this in pytorch's graph format
-    data = from_osmnx(G)
+    data = from_osmnx(G, nodes, edges)
 
     # make dict
     # above process was order preserving
