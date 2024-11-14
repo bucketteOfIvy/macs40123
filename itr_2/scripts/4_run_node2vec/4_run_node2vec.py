@@ -58,7 +58,7 @@ def from_osmnx(G, group_node_attrs=None, group_edge_attrs=None):
             print(node_attrs)
             print("Dropping a node")
             continue
-        
+
             raise ValueError('Not all nodes contain the same attributes')
         for key, value in feat_dict.items():
             data_dict[str(key)].append(value)
@@ -149,9 +149,9 @@ def read_in_graphs(edges_loc="../../data/shapes/newyork_edges_2020.gpkg",
     Read in graph data, using assumed file names and locations, and return
     both the pytorch graph and a dataset mapping from GEOIDs to graph indices.
     '''
-    edges = gpd.read_file(edges_loc)
+    edges = gpd.read_file(edges_loc, engine='pyogrio', use_arrow=True)
     edges = edges.set_index(['u', 'v', 'key'])
-    nodes = gpd.read_file(nodes_loc)
+    nodes = gpd.read_file(nodes_loc, engine='pyogrio', use_arrow=True)
     nodes = nodes.set_index(['osmid'])
     G = graph_from_gdfs(nodes[['y', 'x', 'GEOID']], edges[['geometry']])
 
@@ -160,7 +160,7 @@ def read_in_graphs(edges_loc="../../data/shapes/newyork_edges_2020.gpkg",
 
     # make dict
     geoid_dict = {}
-    for i, val in enumerate(data.GEOID.tolist()):
+    for i, val in enumerate(data.GEOID):
         if val not in geoid_dict:
             geoid_dict[val] = [i]
             continue

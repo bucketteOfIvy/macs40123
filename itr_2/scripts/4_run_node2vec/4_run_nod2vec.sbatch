@@ -11,5 +11,6 @@
 #SBATCH --mem-per-cpu=30G
 
 module load python cuda
+pip install pyogrio pyarrow
 
 python 4_run_node2vec.py
