@@ -26,5 +26,3 @@ nodes = nodes.sjoin(tracts[['GEOID', 'geometry']])
 ### Save
 nodes.to_file('../data/shapes/newyork_nodes_2020_split.gpkg')
 edges.to_file('../data/shapes/newyork_edges_2020_split.gpkg')
-
-
