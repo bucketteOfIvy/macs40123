@@ -50,15 +50,10 @@ def from_osmnx(G, group_node_attrs=None, group_edge_attrs=None):
         group_node_attrs = node_attrs
 
     if group_edge_attrs and not isinstance(group_edge_attrs, list):
-        group_edge_attrs = node_attrs
+        group_edge_attrs = edge_attrs
 
     for i, (_, feat_dict) in enumerate(G.nodes(data=True)):
         if set(feat_dict.keys()) != set(node_attrs):
-            print(feat_dict.keys())
-            print(node_attrs)
-            print("Dropping a node")
-            continue
-
             raise ValueError('Not all nodes contain the same attributes')
         for key, value in feat_dict.items():
             data_dict[str(key)].append(value)
@@ -70,9 +65,7 @@ def from_osmnx(G, group_node_attrs=None, group_edge_attrs=None):
         if set(feat_dict.keys()) != set(edge_attrs):
             print(feat_dict.keys())
             print(node_attrs)
-            j += 1
-            
-             #raise ValueError("Not all edges contain the same attributes")
+            raise ValueError("Not all edges contain the same attributes")
         for key, value in feat_dict.items():
             key = f'edge_{key}' if key in node_attrs else key
             data_dict[str(key)].append(value)
@@ -153,14 +146,15 @@ def read_in_graphs(edges_loc="../../data/shapes/newyork_edges_2020.gpkg",
     edges = edges.set_index(['u', 'v', 'key'])
     nodes = gpd.read_file(nodes_loc, engine='pyogrio', use_arrow=True)
     nodes = nodes.set_index(['osmid'])
-    G = graph_from_gdfs(nodes[['y', 'x', 'GEOID']], edges[['geometry']])
+    G = graph_from_gdfs(nodes[['y', 'x']], edges[['geometry']])
 
     # We need this in pytorch's graph format
     data = from_osmnx(G)
 
     # make dict
+    # above process was order preserving
     geoid_dict = {}
-    for i, val in enumerate(data.GEOID):
+    for i, val in enumerate(nodes.GEOID.tolist()):
         if val not in geoid_dict:
             geoid_dict[val] = [i]
             continue
