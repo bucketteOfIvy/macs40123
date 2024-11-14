@@ -4,7 +4,7 @@
 import sys
 import geopandas as gpd
 import torch
-from sklearn.manifold import TSNE
+#from sklearn.manifold import TSNE
 from osmnx import graph_from_gdfs
 from torch_geometric.nn import Node2Vec
 from torch_geometric.utils.convert import from_networkx
