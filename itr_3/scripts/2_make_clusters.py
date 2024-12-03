@@ -37,11 +37,11 @@ df = pd.DataFrame(gpd.read_file('../data/shapes/nyc_census.gpkg').drop('geometry
 df = spark.createDataFrame(df[cluster_feature_cols])
 
 # Get our feature columns
-df_features = df.select(*(F.col(c).cast("float").alias(c) for c in cluster_feature_cols), "GEOID") \
+df_features = df.select(*(F.col(c).cast("float").alias(c) for c in cluster_feature_cols)) \
                 .dropna()\
                 .withColumn('pca_features', F.array(*[F.col(c) for c in pca_feature_cols])) \
                 .withColumn("cluster_features", F.array(*[F.col(c) for c in cluster_feature_cols])) \
-                .select('GEOID', 'pca_features', 'cluster_features')
+                .select('pca_features', 'cluster_features')
 
 standardizer = StandardScaler(inputCol = 'features_unscaled', outputCol='features')
 
@@ -83,7 +83,8 @@ while not explains_enough_variance:
         print("Saving principal components.")
         # Save component info
         expl_vars = pca_model.explainedVariance.toArray()
-        rows = [(i, expl_vars[i], *pca_model.pc[i, :]) for i in range(num_components)]
+        pca_loadings = pca_model.pc.toArray()
+        rows = [(i, expl_vars[i], *pca_loadings[i, :]) for i in range(num_components)]
         loading_df = spark.createDataFrame(rows, ['component', 'explained_var'] + pca_feature_cols)
         loading_df.write.csv('../data/pca_loadings.csv', header=True)
 
