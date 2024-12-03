@@ -85,8 +85,8 @@ while not explains_enough_variance:
         expl_vars = pca_model.explainedVariance.toArray()
         pca_loadings = pca_model.pc.toArray()
         rows = [(i, expl_vars[i], *pca_loadings[i, :]) for i in range(num_components)]
-        loading_df = spark.createDataFrame(rows, ['component', 'explained_var'] + pca_feature_cols)
-        loading_df.write.csv('../data/pca_loadings.csv', header=True)
+        loading_df = pd.DataFrame(rows, ['component', 'explained_var'] + pca_feature_cols)
+        loading_df.to_csv('../data/pca_loadings.csv', header=True)
 
         # Save transformed data
         pca_results = model.transform(pca_features).select("pcaFeatures")
