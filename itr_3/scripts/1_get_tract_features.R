@@ -75,7 +75,7 @@ get_variables <- function(city_shapefile, crashes, state) {
     select(-total_black_pop, -labor_force,
            -under_5, -`5_to_17`, -`65_to_74`, -`75_plus`,
            -ed_universe, -agg_work_travel, -health_universe, 
-           -without_insurance)
+           -without_insurance, -less_hs, -bach_plus, -some_college)
   # DHC
   dhc <- tidycensus::get_decennial(geography='tract', 
                                    variables=c("owner_occ"="H10_002N",
