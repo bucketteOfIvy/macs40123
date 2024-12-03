@@ -62,7 +62,7 @@ all_cols = list(set(pca_feature_cols + financial_pca_cols + med_fric_pca_cols))
 
 # Read in our data
 # It's stored as a geodatapackage, which is not easily readable in pyspark 
-df = pd.DataFrame(gpd.read_file('../data/shapes/nyc_census.gpkg').drop('geometry', axis=1))
+df = pd.DataFrame(gpd.read_file('../data/shapes/nyc_census_imputed.gpkg').drop('geometry', axis=1))
 df = spark.createDataFrame(df)
 
 # Get our feature columns
