@@ -85,13 +85,12 @@ while not explains_enough_variance:
         expl_vars = pca_model.explainedVariance.toArray()
         pca_loadings = pca_model.pc.toArray()
         rows = [(i, expl_vars[i], *pca_loadings[:, i]) for i in range(num_components)]
-        print(rows)
-        loading_df = pd.DataFrame(rows, header=['component', 'explained_var'] + pca_feature_cols)
+        loading_df = pd.DataFrame(rows, columns=['component', 'explained_var'] + pca_feature_cols)
         loading_df.to_csv('../data/pca_loadings.csv', header=True)
 
         # Save transformed data
-        pca_results = model.transform(pca_features).select("pcaFeatures")
-        pca_results.write.csv('../data/pca_features.csv')
+        pca_results = pca_model.transform(pca_features).select('pcaFeatures')
+        pca_results.write.mode('overwrite').parquet('../data/pca_results.parquet')
 
         # End loop
         explains_enough_variance = True
@@ -101,7 +100,7 @@ while not explains_enough_variance:
 
 # Surprise tool that will help us later
 pca_features = pca_results.rdd.map(lambda row: Vectors.dense(row.pcaFeatures))
-pca_features = spark.CreateDataFrame(pca_features.map(Row), ['features'])
+pca_features = spark.createDataFrame(pca_features.map(Row), ['features'])
 
 pca_features.persist()
 
@@ -113,7 +112,7 @@ print("\n-------------- Clustering not on PCAs --------------")
 # I'm writing as though space is expensive but computation is cheap
 # So we repeat a computation instead saving the results of the computation.
 
-def fit_transform(cluster_features, cluster_model, num_clusters, save_centers=False):
+def fit_transform(cluster_features, cluster_model, num_clusters, save_centers=False, save_loc="../data/cluster_centers.csv"):
     '''
     Given the type of cluster to fit, the class of model to fit, and 
     the number of clusters to fit, a clustering model and return the 
@@ -124,9 +123,9 @@ def fit_transform(cluster_features, cluster_model, num_clusters, save_centers=Fa
 
     if save_centers:
         print("Saving clusters centers..")
-        centers = model.clusterCenters
-        centers = spark.createDataFrame(centers, [f'Center {i}' for i in range(num_clusters)])
-        centers.write.csv('../data/cluster_centers.csv')
+        centers = model.clusterCenters()
+        centers = pd.DataFrame(centers, [f'Center {i}' for i in range(num_clusters)])
+        centers.to_csv(save_loc) 
 
     return model.transform(cluster_features)
 
@@ -150,14 +149,18 @@ def find_best_clusters(cluster_features, cluster_model=KMeans, max_k=5):
 
     return(best_k, best_sil)
 
-best_k, _ = find_best_clusters(cluster_features, KMeans)
-fit_transform(cluster_features, KMeans, best_k, save_centers=True)
+best_k, best_sil = find_best_clusters(cluster_features, KMeans)
+print(f"Best number of clusters is {best_k} with silhouette {best_sil}")
+cluster_results = fit_transform(cluster_features, KMeans, best_k, save_centers=True)
+cluster_results.write.mode('overwrite').parquet('../data/cluster.parquet')
 
 ### Cluster on PCAs
 # Cluster again, but on PCAs this time!
 # We only even look at these if the PCAs are all somewhat nameable.
 print("\n-------------- Clustering on PCAs --------------")
 
-best_k, _ = find_best_clusters(pca_features, KMeans)
-fit_transform(pca_features, KMeans, best_k, save_centers=True)
+best_k, best_sil = find_best_clusters(pca_features, KMeans)
+print(f"Best number of clusters is {best_k} with silhouette {best_sil}")
+cluster_results = fit_transform(pca_features, KMeans, best_k, save_centers=True, save_loc="../data/pca_cluster_centers.csv")
+cluster_results.write.mode('overwrite').parquet('../data/pca_cluster.parquet')
 

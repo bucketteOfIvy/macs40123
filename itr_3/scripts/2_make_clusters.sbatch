@@ -15,3 +15,5 @@ export PYSPARK_DRIVER_PYTHON=/software/python-anaconda-2022.05-el8-x86_64/bin/py
 export PYSPARK_PYTHON=/software/python-anaconda-2022.05-el8-x86_64/bin/python3
 
 spark-submit --total-executor-cores 8 --executor-memory 5G 2_make_clusters.py
+
+
