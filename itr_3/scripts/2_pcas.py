@@ -8,7 +8,6 @@ import pandas as pd
 from pyspark.sql import SparkSession, Row
 from pyspark.ml.linalg import Vectors
 from pyspark.ml.feature import StandardScaler, PCA
-from pyspark.mllib.feature import StandardScaler 
 import pyspark.sql.functions as F
 
 def run_pca(pca_features, min_components, num_features, result_prefix=''):
