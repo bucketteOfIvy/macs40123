@@ -33,7 +33,7 @@ cluster_feature_cols = pca_feature_cols + ['num_crashes', 'HCI2010']
 
 # Read in our data
 # It's stored as a geodatapackage, which is not easily readable in pyspark 
-df = pd.DataFrame(gpd.read_file('..data/shapes/nyc_census.gpkg').drop('geometry', axis=1))
+df = pd.DataFrame(gpd.read_file('../data/shapes/nyc_census.gpkg').drop('geometry', axis=1))
 df = spark.createDataFrame(df[cluster_feature_cols])
 
 # Get our feature columns
