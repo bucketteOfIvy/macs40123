@@ -84,7 +84,7 @@ while not explains_enough_variance:
         # Save component info
         expl_vars = pca_model.explainedVariance.toArray()
         pca_loadings = pca_model.pc.toArray()
-        rows = [(i, expl_vars[i], *pca_loadings[i, :]) for i in range(num_components)]
+        rows = [(i, expl_vars[i], *pca_loadings[:, i]) for i in range(num_components)]
         print(rows)
         loading_df = pd.DataFrame(rows, index=['component', 'explained_var'] + pca_feature_cols)
         loading_df.to_csv('../data/pca_loadings.csv', header=True)
