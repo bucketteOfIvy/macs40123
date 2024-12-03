@@ -25,11 +25,11 @@ spark = SparkSession \
 # I have a *logic* connecting each of these features to risk of additional
 # negative crash outcomes. Hence this approach!
 pca_feature_cols = ["perBlack", "unempl", "percentNoHs", 
-                'perWithoutIns', "perOver65", "perUnder5", 
+                'perWithoutIns', "perOver65", 
                 "medHouseVal", "medHouseIncome"]
 
 # I have a slightly different outcome of interest on the cluster data.
-cluster_feature_cols = pca_feature_cols + ['numCrashes', 'HRI2010']
+cluster_feature_cols = pca_feature_cols + ["perUnder5", 'numCrashes', 'HRI2010']
 
 # Read in our data
 # It's stored as a geodatapackage, which is not easily readable in pyspark 
