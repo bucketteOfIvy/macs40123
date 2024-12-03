@@ -29,7 +29,7 @@ pca_feature_cols = ["perBlack", "unempl", "percentNoHs",
                 "medHouseVal", "medHouseIncome"]
 
 # I have a slightly different outcome of interest on the cluster data.
-cluster_feature_cols = pca_feature_cols + ['num_crashes', 'HCI2010']
+cluster_feature_cols = pca_feature_cols + ['numCrashes', 'HCI2010']
 
 # Read in our data
 # It's stored as a geodatapackage, which is not easily readable in pyspark 
