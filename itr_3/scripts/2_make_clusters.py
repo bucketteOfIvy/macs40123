@@ -10,7 +10,7 @@ from pyspark.sql import SparkSession, Row
 from pyspark.ml.linalg import Vectors
 from pyspark.ml.feature import StandardScaler, PCA
 from pyspark.ml.clustering import KMeans
-from pyspark.evaluation import ClusteringEvaluator
+from pyspark.ml.evaluation import ClusteringEvaluator
 from pyspark.mllib.feature import StandardScaler as StandardScalerRDD
 from pyspark.mllib.linalg.distributed import RowMatrix
 import pyspark.sql.functions as F
@@ -33,7 +33,7 @@ cluster_feature_cols = pca_feature_cols + ['num_crashes', 'HCI2010']
 
 # Read in our data
 # It's stored as a geodatapackage, which is not easily readable in pyspark 
-df = pd.Dataframe(gpd.read_file('..data/shapes/nyc_census.gpkg').drop('geometry', axis=1))
+df = pd.DataFrame(gpd.read_file('..data/shapes/nyc_census.gpkg').drop('geometry', axis=1))
 df = spark.createDataFrame(df[cluster_feature_cols])
 
 # Get our feature columns
