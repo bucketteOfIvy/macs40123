@@ -37,7 +37,7 @@ df = pd.DataFrame(gpd.read_file('../data/shapes/nyc_census.gpkg').drop('geometry
 df = spark.createDataFrame(df[cluster_feature_cols])
 
 # Get our feature columns
-df_features = df.select(*(F.col(c).cast("float").alias(c) for c in feature_cols), "GEOID") \
+df_features = df.select(*(F.col(c).cast("float").alias(c) for c in cluster_feature_cols), "GEOID") \
                 .dropna()\
                 .withColumn('pca_features', F.array(*[F.col(c) for c in pca_feature_cols])) \
                 .withColumn("cluster_features", F.array(*[F.col(c) for c in cluster_feature_cols])) \
