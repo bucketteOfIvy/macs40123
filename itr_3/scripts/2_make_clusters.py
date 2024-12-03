@@ -24,8 +24,7 @@ spark = SparkSession \
 
 # I have a *logic* connecting each of these features to risk of additional
 # negative crash outcomes. Hence this approach!
-pca_feature_cols = ["perBlack", "unempl", "percentNoHs", 'perWithoutIns', 
-                        "medHouseVal", "medHouseIncome"]
+pca_feature_cols = ["perBlack", "unempl", "percentNoHs", 'perWithoutIns', "medHouseIncome"]
 
 # I have a slightly different outcome of interest on the cluster data.
 cluster_feature_cols = pca_feature_cols + ["perOver65", "perUnder5", 'numCrashes', 'HRI2010']
