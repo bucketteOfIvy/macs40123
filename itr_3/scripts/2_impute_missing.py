@@ -39,6 +39,6 @@ if __name__ == "__main__":
     gdf = gpd.read_file('../data/shapes/nyc_census.gpkg')
     for col in to_impute:
         print(f'Imputing {col}')
-        gdf = knn_impute_spatially(gdf, col)
+        gdf = knn_impute_spatially(gdf, col, 5)
     
     gdf.to_file('../data/shapes/nyc_census_imputed.gpkg')
