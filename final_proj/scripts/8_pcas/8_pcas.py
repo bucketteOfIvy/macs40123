@@ -32,11 +32,12 @@ def run_pca(features, feature_names, min_components, result_prefix=''):
             pca_loadings = pca_model.pc.toArray()
             rows = [(i, expl_vars[i], *pca_loadings[:, i]) for i in range(num_components)]
             loading_df = pd.DataFrame(rows, columns=['component', 'explained_var'] + feature_names)
-            loading_df.to_csv(f'../data/{result_prefix}_pca_loadings.csv', header=True)
+            loading_df.to_csv(f'../../data/{result_prefix}_pca_loadings.csv', header=True)
+
 
             # Save transformed data
             pca_results = pca_model.transform(features).select('pcaFeatures')
-            pca_results.write.mode('overwrite').parquet(f'../data/{result_prefix}_pca_results.parquet')
+            pca_results.write.mode('overwrite').parquet(f'../../data/{result_prefix}_pca_results.parquet')
 
             # End loop
             explains_enough_variance = True
@@ -53,8 +54,8 @@ spark = SparkSession \
 
 # I have a *logic* connecting each of these features to risk of additional
 # negative crash outcomes. Hence this approach!
-pca_feature_cols = ["perBlack", "unempl", "percentNoHs", 'perWithoutIns', "medHouseIncome"]
-financial_pca_cols = ["medHouseIncome", "unemplRate", 'medHouseVal', 'perOwnerOcc', 'workTravelAv', 'percentPov', 'percentCarCom', 'percetnRentBurd']
+pca_feature_cols = ["perBlack", "unemplRate", "percentNoHs", 'perWithoutIns', "medHouseIncome"]
+financial_pca_cols = ["medHouseIncome", "unemplRate", 'perOwnerOcc', 'percentPov', 'percentCarCom', 'percentRentBurd']
 med_fric_pca_cols = ['percentNoHs', 'percentBach', 'perBlack', 'perWithoutIns', 'perOver65']
 all_cols = list(set(pca_feature_cols + financial_pca_cols + med_fric_pca_cols))
 
@@ -62,7 +63,7 @@ all_cols = list(set(pca_feature_cols + financial_pca_cols + med_fric_pca_cols))
 
 # Read in our data
 # It's stored as a geodatapackage, which is not easily readable in pyspark 
-df = pd.DataFrame(gpd.read_file('../data/shapes/nyc_census_imputed.gpkg').drop('geometry', axis=1))
+df = pd.DataFrame(gpd.read_file('../../data/shapes/nyc_census_imputed.gpkg').drop('geometry', axis=1))
 df = spark.createDataFrame(df)
 
 # Get our feature columns
