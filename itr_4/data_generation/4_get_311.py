@@ -118,4 +118,4 @@ if __name__ == "__main__":
     nyc_tracts['street_311s'] = nyc_tracts['street_311s'].fillna(0)
 
     # Save
-#    nyc_tracts.to_csv('../data/shapes/nyc_311.gpkg')
+    nyc_tracts.to_csv('../data/shapes/nyc_311.gpkg')
