@@ -70,7 +70,7 @@ get_variables <- function(city_shapefile, crashes, state) {
       percentSomeCol  = round(100 * some_college / ed_universe, 2      ),
       workTravelAv    = round(agg_work_travel / labor_force, 2         ),
       perWithoutIns   = round(without_insurance / health_universe, 2   ),
-      percentPov      = round(100 * poverty_above / poverty_universe, 2),
+      percentPov      = round(1 - (100 * poverty_above / poverty_universe), 2),
       percentCarCom   = round(100 * car_commute / commute_universe, 2  ),
       percentRentBurd = round(100 * rent_burdened / rent_universe, 2   )
     ) |>
