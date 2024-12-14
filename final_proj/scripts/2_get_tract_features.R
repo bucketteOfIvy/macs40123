@@ -27,11 +27,13 @@ get_crash_counts <- function(crashes, state) {
     st_transform(st_crs(crashes))
   
   crash_inj <- crashes[as.logical(crashes$per_injure),]
-  
+  per_killed <- crashes[as.logical(crashes$per_killed),]
+
   (tracts$numCrashes <- lengths(st_intersects(tracts, crashes  )))
   (tracts$injCrashes <- lengths(st_intersects(tracts, crash_inj)))
-  
-  tracts <- select(tracts, GEOID, numCrashes, injCrashes) |> st_drop_geometry()
+  (tracts$deathsCrashes <- lengths(st_intersects(tracts, per_killed)))
+
+  tracts <- select(tracts, GEOID, numCrashes, injCrashes, deathsCrashes) |> st_drop_geometry()
   return(tracts)
 }
 

@@ -37,7 +37,7 @@ if __name__ == "__main__":
     #             'medHouseIncome']
 
     gdf = gpd.read_file('../data/shapes/nyc_census.gpkg')
-    to_impute = gdf.drop(['GEOID', 'geometry', 'numCrashes', 'popDens', 'HRI2010', 'injCrashes'], axis=1).columns
+    to_impute = gdf.drop(['GEOID', 'geometry', 'numCrashes', 'popDens', 'HRI2010', 'injCrashes', 'deathsCrashes'], axis=1).columns
 
     for col in to_impute:
         print(f'Imputing {col}')
